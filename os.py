@@ -1,6 +1,5 @@
 import numpy as np
 
-
 ######################################################
 class proc(object):
     
@@ -15,7 +14,9 @@ class proc(object):
         wait = 0
         tat = 0 
         weighted =0
-        
+        start =0
+        finish = 0
+        served =0
 
 
 ########################################################
@@ -55,10 +56,29 @@ o.close()
 
 #########################################################
 time =0
+context =1
 #FCFS
-'''
+
 arrSorted = sorted(procList, key=lambda x: x.arr, reverse=True)
 for i in range(processes):
-    time+= 
-    arrSorted[i].wait = a
-'''
+    if i>0
+		arrSorted[i].finish = arrSorted[i].bur+arrSorted[i-1].finish+context
+	
+	else 
+		arrSorted[i].finish =arrSorted[i].arr+arrSorted[i]
+		
+		
+		
+###########################################3333		
+avgTat =0
+weightedAvg =0
+		#calc
+for i in range(processes):
+arrSorted[i].tat = arrSorted[i].finish - arrSorted[i].arr
+arrSorted[i].wait= arrSorted[i].tat - arrSorted[i].bur	
+avgTat+=arrSorted[i].tat;
+weightedAvg += arrSorted[i].tat/arrSorted[i].bur
+		
+		
+		
+		
