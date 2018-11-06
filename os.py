@@ -4,17 +4,17 @@ import numpy as np
 ######################################################
 class proc(object):
     
-    avgTat 
-    avgWeightedTat 
-    N 
+    #avgTat 
+    #avgWeightedTat 
+    #N 
     def __init__(self, arr, bur, pri, n):
         self.arr = arr
         self.bur = bur
         self.pri = pri
         self.n = n
-        wait = 0
-        tat = 0 
-        weighted =0
+       # wait = 0
+        #tat = 0 
+        #weighted =0
         
 
 
