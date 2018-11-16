@@ -1,9 +1,6 @@
 from tkinter import *
 import tkinter.ttk as ttk
 
-
-t = 'f'
-
 class Window:
     def __init__(self,r):
         self.AlgoLabel=Label(r, text='Choose Algo')
@@ -28,19 +25,5 @@ class Window:
 
 
 root = Tk()
-
-
 w=Window(root)
-
-print (t)
-
-
-
-
-
-
-
-
-
-
 root.mainloop()
