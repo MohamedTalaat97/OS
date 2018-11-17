@@ -1,4 +1,5 @@
-
+import numpy as np 
+import matplotlib.pyplot as plt
 
 ######################################################
 
@@ -47,8 +48,8 @@ for i in range(processes):
     pri = int(np.random.poisson(lam=priorityLamda))
     procList.append(proc(arr, bur, pri, i ))                          
     '''
-procList.append(proc (1,2,5,0))   
-procList.append(proc (9,1,5,1)) 
+procList.append(proc (1,2,5,1))   
+procList.append(proc (9,1,5,2)) 
 #procList.append(proc (3,2,5,2)) 
 #procList.append(proc (7,2,5,3)) 
 #procList.append(proc (7,4,5,2)) 
@@ -81,12 +82,17 @@ for i in range(processes):
 		
 ######################################################################
 ###########################SRTN#######################################
+seq=[]
+serve=[]
 
 context =1
 servedProc=-1    #no process
-timestep = 0.5
+timestep = 0.15
 arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
-time =arrSorted[0].arr    #start of timeline
+time =arrSorted[0].arr 
+seq.append(time)
+serve.append(arrSorted[0].n)
+   #start of timeline
 arrReady=[]
 c=0
 while c < len(arrSorted):
@@ -104,12 +110,18 @@ while (len(arrSorted)>0 or len(arrReady)>0): #main loop
     if len(arrReady)>0:
         if servedProc!=-1 and servedProc != arrReady[0].n:
             time += context
+            seq.append(time)
+            serve.append(0)
         servedProc = arrReady[0].n       #serving
         arrReady[0].time -= timestep                    
         time+= timestep
+        seq.append(time)
+        serve.append(arrReady[0].n)
         size = len(arrReady)
     else:   
-        time+= timestep 
+        time+= timestep
+        seq.append(time)
+        serve.append(0)
         servedProc=-1                               #no serving  ->advance time
     '''
     new processes arriving
@@ -135,6 +147,7 @@ while (len(arrSorted)>0 or len(arrReady)>0): #main loop
                     c=c-1
                     break
         c=c+1
+
 #######################################################
 ###############calc#################################	
 '''
@@ -154,3 +167,12 @@ weightedAvg = weightedAvg/processes
 gui -> get data from text boxes and connect the button and get data form combo box 
 code to read new input file 
 '''
+y_pos = np.arange(len(seq))
+performance = [10,8,6,4,2,1]
+ 
+plt.bar(y_pos, serve, align='center', alpha=0.1)
+plt.xticks(y_pos, seq)
+plt.ylabel('process')
+plt.title('time')
+ 
+plt.show()

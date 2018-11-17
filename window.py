@@ -43,7 +43,14 @@ class Window:
             self.ErrorLabel['text'] = 'please enter a valid Quantum '    
             
         else:
-             if self.combo.get() == 'RR':
+             if self.combo.get() == 'FCFS':
+             
+             elif self.combo.get() == 'HPF':
+                 
+             elif self.combo.get() == 'RR':
+                 
+             elif self.combo.get() == 'STRN':
+                 
                  '''
                  call functions
                  '''
@@ -57,22 +64,7 @@ class Window:
 
 root = Tk()
 w=Window(root)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 root.mainloop()
-print(len(d))
+
 
 
