@@ -74,10 +74,13 @@ arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
 for i in range(processes):
     if i>0:
         if arrSorted[i].arr <= arrSorted[i-1].finish:
-            arrSorted[i].finish = arrSorted[i].bur+arrSorted[i-1].finish+context
+            arrSorted[i].start = arrSorted[i-1].finish+context
+            arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
         elif arrSorted[i].arr > arrSorted[i-1].finish:
+            arrSorted[i].start =arrSorted[i].arr
             arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].arr
-    else:    
+    else:
+        arrSorted[i].start =arrSorted[i].arr    
         arrSorted[i].finish =arrSorted[i].arr+arrSorted[i].bur
 		
 ######################################################################
