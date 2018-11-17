@@ -4,10 +4,7 @@
 
 
 class proc(object):
-    
-    #avgTat 
-    #avgWeightedTat 
-    #N 
+
     def __init__(self, arr, bur, pri, n):
         self.arr = arr
         self.bur = bur
@@ -48,11 +45,12 @@ for i in range(processes):
     arr = (np.random.normal(loc=arrivalMu, scale=arrivalSigma))
     bur = (np.random.normal(loc=arrivalMu, scale=arrivalSigma))
     pri = int(np.random.poisson(lam=priorityLamda))
-    procList.append(proc(arr, bur, pri, i ))
+    procList.append(proc(arr, bur, pri, i ))                          
     '''
-    
-procList.append(proc (1,5,5,0))   
-procList.append(proc (3,1,5,1)) 
+procList.append(proc (1,2,5,0))   
+procList.append(proc (9,1,5,1)) 
+#procList.append(proc (3,2,5,2)) 
+#procList.append(proc (7,2,5,3)) 
 #procList.append(proc (7,4,5,2)) 
 processes =2
 
@@ -67,7 +65,7 @@ o.close()
 
 
 #################FCFS##################################
-'''
+
 context =1
 arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
 
@@ -81,19 +79,14 @@ for i in range(processes):
     else:    
         arrSorted[i].finish =arrSorted[i].arr+arrSorted[i].bur
 		
-		
-print('finish ' +str(arrSorted[1].finish))
-print('arr ' +str(arrSorted[1].arr))
-'''
 ######################################################################
-###########################SRTN##########################################
-context =1
-servedProc=-1
-time =0
-timestep = 0.5
+###########################SRTN#######################################
 
+context =1
+servedProc=-1    #no process
+timestep = 0.5
 arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
-time =arrSorted[0].arr
+time =arrSorted[0].arr    #start of timeline
 arrReady=[]
 c=0
 while c < len(arrSorted):
@@ -108,30 +101,27 @@ while (len(arrSorted)>0 or len(arrReady)>0): #main loop
    
     arrReady.sort(key=lambda x: x.time, reverse=False)     # sort according to remaining time   
             
-    while(1):
+    if len(arrReady)>0:
         if servedProc!=-1 and servedProc != arrReady[0].n:
             time += context
-        servedProc = arrReady[0].n
-        if len(arrReady) != 0:                                #serving
-            arrReady[0].time -= timestep                    
+        servedProc = arrReady[0].n       #serving
+        arrReady[0].time -= timestep                    
         time+= timestep
         size = len(arrReady)
+    else:   
+        time+= timestep 
+        servedProc=-1                               #no serving  ->advance time
+    '''
+    new processes arriving
+    '''
+    c=0
+    while c < len(arrSorted):
+        if (arrSorted[c].arr<=time):
+            arrReady.append(arrSorted[c])        # check new arriving
+            arrSorted.pop(c)
+            c=c-1
+        c=c+1
         
-        '''
-        new processes arriving
-        '''
-        c=0
-        while c < len(arrSorted):
-            if (arrSorted[c].arr<=time):
-                arrReady.append(arrSorted[c])        # check new arriving
-                arrSorted.pop(c)
-                c=c-1
-            c=c+1
-        if size!= len(arrReady) or len(arrReady) ==1 or len(arrSorted) ==0:
-            break
-
-
-
     '''
     finished proceses
     '''
@@ -145,7 +135,6 @@ while (len(arrSorted)>0 or len(arrReady)>0): #main loop
                     c=c-1
                     break
         c=c+1
-print(procList[0].finish)
 #######################################################
 ###############calc#################################	
 '''
@@ -161,9 +150,7 @@ for i in range(len(procList)):
 avgTat = avgTat/processes
 weightedAvg = weightedAvg/processes
 '''
-
-
-
 '''
 gui -> get data from text boxes and connect the button and get data form combo box 
 code to read new input file 
+'''
