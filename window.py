@@ -208,7 +208,7 @@ def RR(file ,context ,quantum):
     f.close() 
     cpyProcList.sort(key=lambda x: x.arr, reverse=False)
     readyQueue=[]
-    t=cpyProcList[0].arr #initial time 
+    t=cpyProcList[0].arr+float(context) #initial time 
     readyQueue.append(cpyProcList[0])
     cpyProcList[0].beenReady=1
     ################# Arrays for Graph####################
@@ -217,10 +217,12 @@ def RR(file ,context ,quantum):
     procDiff=[]
     procIDs=[]
     flag=0
+    lastProcess=cpyProcList[0]
     while True:
         if len (readyQueue) !=0:
-            if readyQueue[0].bur > float (quantum):
-                t+=float(context)
+            if readyQueue[0].bur > float(quantum):
+                if lastProcess.n!=readyQueue[0].n:
+                    t+=float(context)
                 procStarts.append(t)
                 t+= float(quantum)
                 procEnds.append(t)
@@ -232,7 +234,8 @@ def RR(file ,context ,quantum):
                 procIDs.append(readyQueue[0].n)
                 
             else:
-                t+=float(context)
+                if lastProcess.n!=readyQueue[0].n:
+                    t+=float(context)
                 procStarts.append(t)
                 t+=readyQueue[0].bur
                 procEnds.append(t)
@@ -263,7 +266,12 @@ def RR(file ,context ,quantum):
             else:
                 readyQueue.remove(readyQueue[0])           
         else:
-            t+=0.1
+            t+=1
+            for index in range (len(cpyProcList)):
+                    if cpyProcList[index].arr<=t:
+                        if cpyProcList[index].beenReady==0:
+                            readyQueue.append(cpyProcList[index])
+                            cpyProcList[index].beenReady=1
         for index in range (len(cpyProcList)):
              if cpyProcList[index].bur==0:
                  flag+=1
@@ -280,6 +288,7 @@ def RR(file ,context ,quantum):
         procList[index].weighted=float(procList[index].tat)/float(procList[index].bur)
         
     plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    print(len(procIDs))
     plt.show()
 
 ###############################################################################
