@@ -71,7 +71,7 @@ def FCFS(file , context ):
 
     procList = []
     procList.append(proc (1,2,5,1))   
-    procList.append(proc (9,1,5,2)) 
+    procList.append(proc (2,0.2,5,2)) 
     
     arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
     
@@ -108,14 +108,14 @@ def STRN(file,context):
     
     procList = []
     procList.append(proc (1,2,5,1))   
-    procList.append(proc (9,1,5,2)) 
+    procList.append(proc (2,0.3,5,2)) 
     st=[]
     fn=[]
     n=[] 
     servedProc=-1    #no process
     timestep = 0.1
     arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
-    time =arrSorted[0].arr+float(context) 
+    time =arrSorted[0].arr
        #start of timeline
     arrReady=[]
     c=0
@@ -126,6 +126,7 @@ def STRN(file,context):
             c=c-1
         c = c+1
  
+    
     while (len(arrSorted)>0 or len(arrReady)>0): #main loop
        
         arrReady.sort(key=lambda x: x.time, reverse=False)     # sort according to remaining time   
@@ -163,18 +164,18 @@ def STRN(file,context):
                     if arrReady[c].n ==procList[j].n :
                         fn.append(time+procList[j].time)        # remove finished proc from ready and set finish time in original list
                         procList[j].finish= time+procList[j].time
+                        servedProc=-1
                         arrReady.pop(c)
                         c=c-1
                         break
             c=c+1
             
     diff =[]   
-    print (st,n)
     
     for i in range(len(st)):
         diff.append(fn[i]-st[i])
                 
-    print(st,n,diff)    
+    print(st,n,fn)    
     plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
     plt.show()
     
