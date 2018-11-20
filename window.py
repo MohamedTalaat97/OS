@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 ######################################################
 class proc(object):
-
     def __init__(self, arr, bur, pri, n):
         self.arr = arr
         self.bur = bur
@@ -18,6 +17,7 @@ class proc(object):
         self.finish = 0
         self.served =0
         self.time = bur
+        self.beenReady=0
 ##########################################################
 class Window:
     def __init__(self,r):
@@ -43,7 +43,6 @@ class Window:
         self.bt.bind("<Button-1>", self.done)
         self.data=[]
     
-
     def callback(self,event):
         if self.combo.get() == 'RR':
             self.QuantumLabel.grid(row=5)
@@ -57,7 +56,7 @@ class Window:
            self.ErrorLabel['text'] = 'please enter all fileds '
         elif not str.isdigit(self.ContextEntry.get()):
             self.ErrorLabel['text'] = 'please enter a valid context '
-        elif (not str.isdigit(self.combo.get())) and self.combo.get() == 'RR':
+        elif ( str.isdigit(self.combo.get())) and self.combo.get() == 'RR':
             self.ErrorLabel['text'] = 'please enter a valid Quantum '    
             
         else:
@@ -65,50 +64,67 @@ class Window:
                  FCFS(self.FileEntry.get(),self.ContextEntry.get())
              elif self.combo.get() == 'STRN':
                 STRN(self.FileEntry.get(),self.ContextEntry.get())
+             elif self.combo.get() == 'RR':
+                RR(self.FileEntry.get(),self.ContextEntry.get(),self.QuantumEntry.get())
+             elif self.combo.get() == 'HPF':
+                HPF(self.FileEntry.get(),self.ContextEntry.get())
 ########################################################
-
 def FCFS(file , context ):
 
-    procList = []
-    procList.append(proc (1,2,5,1))   
-    procList.append(proc (2,0.2,5,2)) 
+   f=open(file,"r")
+   lines=f.readlines()
+   no = lines[0]
+   no =no.replace('\n','')
+   processes = int (no)
+   lines.remove(lines[0])
+   procList=[]
+   for i in range(processes):
+       priority=lines[i].split(' ')[3]
+       priority=priority.replace('\n','')
+       procList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+   f.close() 
     
-    arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
-    
-    
-    for i in range(len(procList)):
-        if i>0:
-            if arrSorted[i].arr <= arrSorted[i-1].finish:
-                arrSorted[i].start = arrSorted[i-1].finish+float(context) 
-                arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
-            elif arrSorted[i].arr > arrSorted[i-1].finish:
-                arrSorted[i].start =arrSorted[i].arr+float(context) 
-                arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
-        else:
+   arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)   
+   for i in range(len(procList)):
+       if i>0:
+           if arrSorted[i].arr <= arrSorted[i-1].finish:
+               arrSorted[i].start = arrSorted[i-1].finish+float(context) 
+               arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
+           elif arrSorted[i].arr > arrSorted[i-1].finish:
+               arrSorted[i].start =arrSorted[i].arr+float(context) 
+               arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
+       else:
             print(arrSorted[i].arr)
             arrSorted[i].start =arrSorted[i].arr+float(context)    
             arrSorted[i].finish =arrSorted[i].start+arrSorted[i].bur
-    
-    st =[]  
-    n =[]      
-    diff =[]
-    for i in range(len(procList)):
+ 
+   st =[]  
+   n =[]      
+   diff =[]
+   for i in range(len(procList)):
         st.append(procList[i].start)
         n.append(procList[i].n)
         diff.append(procList[i].finish - procList[i].start )
             
-    print(st,n,diff)    
-    plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
-    plt.show()
-    
-    
-    
+   print(st,n,diff)    
+   plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
+   plt.show()
+
 ##############################################################################    
 def STRN(file,context):
     
-    procList = []
-    procList.append(proc (1,2,5,1))   
-    procList.append(proc (2,0.3,5,2)) 
+    f=open(file,"r")
+    lines=f.readlines()
+    no = lines[0]
+    no =no.replace('\n','')
+    processes = int (no)
+    lines.remove(lines[0])
+    procList=[]
+    for i in range(processes):
+        priority=lines[i].split(' ')[3]
+        priority=priority.replace('\n','')
+        procList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+    f.close() 
     st=[]
     fn=[]
     n=[] 
@@ -125,10 +141,8 @@ def STRN(file,context):
             arrSorted.pop(c)
             c=c-1
         c = c+1
- 
-    
-    while (len(arrSorted)>0 or len(arrReady)>0): #main loop
-       
+        
+    while (len(arrSorted)>0 or len(arrReady)>0): #main loop       
         arrReady.sort(key=lambda x: x.time, reverse=False)     # sort according to remaining time   
                 
         if len(arrReady)>0:
@@ -168,21 +182,214 @@ def STRN(file,context):
                         arrReady.pop(c)
                         c=c-1
                         break
-            c=c+1
-            
-    diff =[]   
-    
+            c=c+1           
+    diff =[]      
     for i in range(len(st)):
-        diff.append(fn[i]-st[i])
-                
+        diff.append(fn[i]-st[i])               
     print(st,n,fn)    
     plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
-    plt.show()
-    
+    plt.show()   
 ###############################################################################
+def RR(file ,context ,quantum):
+    
+    f=open(file,"r")
+    lines=f.readlines()
+    no = lines[0]
+    no =no.replace('\n','')
+    processes = int (no)
+    lines.remove(lines[0])
+    procList=[]
+    cpyProcList=[]
+    for i in range(processes):
+        priority=lines[i].split(' ')[3]
+        priority=priority.replace('\n','')
+        procList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+        cpyProcList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+    f.close() 
+    cpyProcList.sort(key=lambda x: x.arr, reverse=False)
+    readyQueue=[]
+    t=cpyProcList[0].arr #initial time 
+    readyQueue.append(cpyProcList[0])
+    cpyProcList[0].beenReady=1
+    ################# Arrays for Graph####################
+    procStarts=[]
+    procEnds=[]
+    procDiff=[]
+    procIDs=[]
+    flag=0
+    while True:
+        if len (readyQueue) !=0:
+            if readyQueue[0].bur > float (quantum):
+                t+=float(context)
+                procStarts.append(t)
+                t+= float(quantum)
+                procEnds.append(t)
+                readyQueue[0].bur-= float(quantum)
+                for u in range (len(cpyProcList)):
+                    if readyQueue[0].n == cpyProcList[u].n:
+                        cpyProcList[u].bur=readyQueue[0].bur
+                readyQueue[0].arr+=float(quantum)
+                procIDs.append(readyQueue[0].n)
+                
+            else:
+                t+=float(context)
+                procStarts.append(t)
+                t+=readyQueue[0].bur
+                procEnds.append(t)
+                readyQueue[0].arr+=readyQueue[0].bur
+                for j in range(len(procList)):
+                    if readyQueue[0].n == procList[j].n:
+                        procList[j].finish=t
+                        procIDs.append(readyQueue[0].n)
+                readyQueue[0].bur=0
+                for u in range (len(cpyProcList)):
+                    if readyQueue[0].n == cpyProcList[u].n:
+                        cpyProcList[u].bur=readyQueue[0].bur
 
- 
+            for index in range (len(cpyProcList)):
+                if cpyProcList[index].arr<=readyQueue[0].arr:
+                    if cpyProcList[index].beenReady==0:
+                        readyQueue.append(cpyProcList[index])
+                        cpyProcList[index].beenReady=1
+                        
+            if readyQueue[0].bur!=0:
+                for index in range (len(cpyProcList)):
+                    if cpyProcList[index].arr<=t:
+                        if cpyProcList[index].beenReady==0:
+                            readyQueue.append(cpyProcList[index])
+                            cpyProcList[index].beenReady=1
+                readyQueue.append(readyQueue[0])
+                readyQueue.remove(readyQueue[0])
+            else:
+                readyQueue.remove(readyQueue[0])           
+        else:
+            t+=0.1
+        for index in range (len(cpyProcList)):
+             if cpyProcList[index].bur==0:
+                 flag+=1
+        if flag == len(cpyProcList):
+            break
+        else:
+            flag=0       
+    for index in range (len(procEnds)):
+        procDiff.append(procEnds[index]-procStarts[index])
+        
+    for index in range (len(procList)):
+        procList[index].tat=procList[index].finish-procList[index].arr
+        procList[index].wait=procList[index].tat-procList[index].bur
+        procList[index].weighted=float(procList[index].tat)/float(procList[index].bur)
+        
+    plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    plt.show()
 
+###############################################################################
+def HPF(file,c):
+    context = float(c)
+    f=open(file,"r")
+    lines=f.readlines()
+    no = lines[0]
+    no =no.replace('\n','')
+    processes = int (no)
+    lines.remove(lines[0])
+    procList=[]
+    cpyProcList=[]
+    for i in range(processes):
+        priority=lines[i].split(' ')[3]
+        priority=priority.replace('\n','')
+        procList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+        cpyProcList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
+    f.close() 
+    servedProcList = []
+    procList.sort(key=lambda x: x.arr, reverse=False)   
+    #handeling first process
+    tmparr=[]
+    for i in range (len(procList)):
+        if procList[0].arr==procList[i].arr:
+            tmparr.append(procList[i])
+    tmparr.sort(key=lambda x: x.pri, reverse=True)
+    for index in range(len(procList)):
+        if tmparr[0].n == procList[index].n:
+            procList[index].start=procList[index].arr+context
+            procList[index].finish=procList[index].start+procList[index].bur
+            procList[index].served=1
+            servedProcList.append(procList[index])
+    tmparr=[]
+    ######################################################
+    allProcessesAreDone=False
+    while allProcessesAreDone!=True:
+        for i in range (len(procList)):
+            temparr=[]
+            #first case if the arrival time of [i] is less than the finish time [i-1]
+            if True:
+                if procList[i].served!=1:
+                    for index in range(len(procList)):
+                        if procList[index].served!=1 and procList[index].arr<=servedProcList[-1].finish:
+                            temparr.append(procList[index])
+                    if len(temparr)>0:
+                        temparr.sort(key=lambda x: x.pri, reverse=True)
+                        for index in range(len(temparr)):
+                            if temparr[index].arr == temparr[0].arr and temparr[index].pri==temparr[0].pri and temparr[index].n<temparr[0].n:
+                                temparr[0]=temparr[index]
+                    for index in range(len(procList)):
+                        if len(temparr)>0 and temparr[0].n == procList[index].n:
+                            if len(servedProcList)>0:
+                                procList[index].start=servedProcList[-1].finish+context
+                                procList[index].finish=procList[index].start+procList[index].bur
+                            else:
+                                procList[index].start=procList[index].arr+context
+                                procList[index].finish=procList[index].start+procList[index].bur
+                            procList[index].served=1
+                            servedProcList.append(procList[index])
+    #################################################################################################################################
+                    #second case if the arrival time of [i] is greater than the finish time [i-1]
+                    if len(temparr)==0:
+                        for index in range(len(procList)):
+                            if procList[index].served!=1 and procList[index].arr>servedProcList[-1].finish:
+                                temparr.append(procList[index])
+                        temparr.sort(key=lambda x: x.arr, reverse=False)
+                        for index in range(len(temparr)):
+                            #check if there is more than on e process have > arr but diff priorities
+                            if temparr[index].arr == temparr[0].arr and temparr[index].pri>temparr[0].pri:
+                                temparr[0]=temparr[index]
+                            elif temparr[index].arr == temparr[0].arr and temparr[index].pri==temparr[0].pri and temparr[index].n<temparr[0].n:
+                                temparr[0]=temparr[index]
+                        #marking process as served and put it in the served list
+                        for index in range(len(procList)):
+                            if temparr[0].n == procList[index].n:
+                                if len(servedProcList)>0:
+                                    procList[index].start=procList[index].arr+context
+                                    procList[index].finish=procList[index].start+procList[index].bur
+                                procList[index].served=1
+                                servedProcList.append(procList[index])
+    #####################################################################################################################################
+        #check if all processes are served to exit the while loop
+        for i in range (len(procList)):
+            if procList[i].served!=1:
+                allProcessesAreDone=False
+                break
+            else:allProcessesAreDone=True
+      
+    for i in range (len(servedProcList)):
+        servedProcList[i].tat=servedProcList[i].finish-servedProcList[i].arr
+        servedProcList[i].wait=servedProcList[i].tat-servedProcList[i].bur
+        servedProcList[i].weighted=float(servedProcList[i].tat)/float(servedProcList[i].bur)
+        print(servedProcList[i].finish)
+        print(servedProcList[i].n)
+    ################################ HPF Graph ####################################   
+    procStarts=[]
+    procEnds=[]
+    procDiff=[]
+    procIDs=[]
+    for i in range (len(servedProcList)):
+        procIDs.append(servedProcList[i].n)
+        procStarts.append(servedProcList[i].start)
+        procEnds.append(servedProcList[i].finish)
+        procDiff.append(procEnds[i]-procStarts[i])
+        print( procIDs[i],procStarts[i], procEnds[i],procDiff[i])
+        
+    plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    plt.show()        
+###############################################################################
 root = Tk()
 w=Window(root)
 root.mainloop()

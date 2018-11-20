@@ -1,4 +1,4 @@
-import numpy as np 
+
 import matplotlib.pyplot as plt
 
 ######################################################
@@ -18,10 +18,12 @@ class proc(object):
         self.finish = 0
         self.served =0
         self.time = bur
+        self.beenReady=0
 
 
 
 ########################################################
+        '''
 f = open('input.txt', 'r')
 processes = int(float(f.readline()))  # no of processes
 
@@ -39,8 +41,9 @@ priorityLamda = float(f.readline())
 b = proc(4,5,6,7)
 
 f.close()
+'''
 ################################################
-procList = []
+
 '''
 for i in range(processes):
     arr = (np.random.normal(loc=arrivalMu, scale=arrivalSigma))
@@ -48,14 +51,15 @@ for i in range(processes):
     pri = int(np.random.poisson(lam=priorityLamda))
     procList.append(proc(arr, bur, pri, i ))                          
     '''
-procList.append(proc (1,2,5,1))   
-procList.append(proc (9,1,5,2)) 
+#procList.append(proc (1,2,5,1))   
+#procList.append(proc (9,1,5,2)) 
 #procList.append(proc (3,2,5,2)) 
 #procList.append(proc (7,2,5,3)) 
 #procList.append(proc (7,4,5,2)) 
-processes =2
+
 
 #####################################################
+'''
 o = open('output.txt', 'w')
 o.write(str(processes) + '\n')
 
@@ -63,10 +67,10 @@ for p in procList:
     o.write(str(p.n) + ' ' + str(p.arr) + ' ' + str(p.bur) + ' ' + str(p.pri) + '\n')
 
 o.close()
-
+'''
 
 #################FCFS##################################
-
+'''
 context =1 
 procList = []
 procList.append(proc (1,2,5,1))   
@@ -98,7 +102,7 @@ for i in range(len(procList)):
 print(st,n,diff)    
 plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
     
-		
+	'''	
 ######################################################################
 ###########################SRTN#######################################
 
@@ -122,166 +126,117 @@ gui -> get data from text boxes and connect the button and get data form combo b
 code to read new input file 
 '''
 #################################################################################### SALAMA ###########################################################################
-'''
+
 
 ###################   Code for Files #############################
-processNumbers=[]
-processArrivals=[]
-processBursts=[]
-processPriorities=[]
 
 f=open("output.txt","r")
 lines=f.readlines()
+no = lines[0]
+no =no.replace('\n','')
+processes = int (no)
 lines.remove(lines[0])
-for x in lines:
-    processNumbers.append(x.split(' ')[0])
-for x in lines:
-    processArrivals.append(x.split(' ')[1])
-for x in lines:
-    processBursts.append(x.split(' ')[2])
-for x in lines:
-    processPriorities.append(x.split(' ')[3])
-
+procList =[]
+for i in range(processes):
+    priority=lines[i][3]
+    priority=priority.split('\n','')
+    procList.append(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(lines[i].split(' ')[3]),int(priority))
 f.close()
-
-
-for x in range(len(processPriorities)):
-    processPriorities[x]=processPriorities[x].replace('\n', '')
-    
-for i in range(len(processNumbers)):
-    procList.append(proc(float(processArrivals[i]),float(processBursts[i]),int(processPriorities[i]),int(processNumbers[i])))
-
 
 o=open("output2.txt", "w")
 for p in procList:
     o.write(str(p.n) + ' ' + str(p.arr) + ' ' + str(p.bur) + ' ' + str(p.pri) + '\n')
 
 o.close()
-'''
+
 #######################################################################
 #################### RR ###############################################
-'''
-cpyProcList=[]
-cpyProcList.append(proc(0,8,3, 0 + 1))
-cpyProcList.append(proc(1, 4,3 , 1 + 1))
-cpyProcList.append(proc(2, 9, 3, 2 + 1))
-cpyProcList.append(proc(3,5, 4, 3 + 1))
-
-
-cpyProcList.sort(key=lambda x: x.arr, reverse=False)
-readyQueue=[]
-seq=[]
-quantum=4
-
-
-t=cpyProcList[0].arr #initial time 
-readyQueue.append(cpyProcList[0])
-cpyProcList[0].beenReady=1
-
-################# Arrays for Graph####################
-procStarts=[]
-procEnds=[]
-procDiff=[]
-procIDs=[]
-
-
-
-flag=0
-while True:
-    if len (readyQueue) !=0:
-        if readyQueue[0].bur > quantum:
-            t+=context
-            procStarts.append(t)
-            t+= quantum
-            procEnds.append(t)
-            readyQueue[0].bur-=quantum
-            for u in range (len(cpyProcList)):
-                if readyQueue[0].n == cpyProcList[u].n:
-                    cpyProcList[u].bur=readyQueue[0].bur
-            readyQueue[0].arr+=quantum
-            seq.append("->")
-            seq.append(readyQueue[0].n)
-            procIDs.append(readyQueue[0].n)
-            
-        else:
-            t+=context
-            procStarts.append(t)
-            t+=readyQueue[0].bur
-            procEnds.append(t)
-            readyQueue[0].arr+=readyQueue[0].bur
-            for j in range(len(procList)):
-                if readyQueue[0].n == procList[j].n:
-                    procList[j].finish=t
-                    seq.append("->")
-                    seq.append(procList[j].n)
-                    procIDs.append(readyQueue[0].n)
-            readyQueue[0].bur=0
-            for u in range (len(cpyProcList)):
-                if readyQueue[0].n == cpyProcList[u].n:
-                    cpyProcList[u].bur=readyQueue[0].bur
-                    
-                    
-                    
-        for index in range (len(cpyProcList)):
-            if cpyProcList[index].arr<=readyQueue[0].arr:
-                if cpyProcList[index].beenReady==0:
-                    readyQueue.append(cpyProcList[index])
-                    cpyProcList[index].beenReady=1
-                    
-        if readyQueue[0].bur!=0:
+def RR(file ,context ,quantum):
+    cpyProcList=[]
+    cpyProcList.append(proc(0,8,3, 0 + 1))
+    cpyProcList.append(proc(1, 4,3 , 1 + 1))
+    cpyProcList.append(proc(2, 9, 3, 2 + 1))
+    cpyProcList.append(proc(3,5, 4, 3 + 1))
+    
+    
+    cpyProcList.sort(key=lambda x: x.arr, reverse=False)
+    readyQueue=[]
+    t=cpyProcList[0].arr #initial time 
+    readyQueue.append(cpyProcList[0])
+    cpyProcList[0].beenReady=1
+    ################# Arrays for Graph####################
+    procStarts=[]
+    procEnds=[]
+    procDiff=[]
+    procIDs=[]
+    flag=0
+    while True:
+        if len (readyQueue) !=0:
+            if readyQueue[0].bur > quantum:
+                t+=context
+                procStarts.append(t)
+                t+= quantum
+                procEnds.append(t)
+                readyQueue[0].bur-=quantum
+                for u in range (len(cpyProcList)):
+                    if readyQueue[0].n == cpyProcList[u].n:
+                        cpyProcList[u].bur=readyQueue[0].bur
+                readyQueue[0].arr+=quantum
+                procIDs.append(readyQueue[0].n)
+                
+            else:
+                t+=context
+                procStarts.append(t)
+                t+=readyQueue[0].bur
+                procEnds.append(t)
+                readyQueue[0].arr+=readyQueue[0].bur
+                for j in range(len(procList)):
+                    if readyQueue[0].n == procList[j].n:
+                        procList[j].finish=t
+                        procIDs.append(readyQueue[0].n)
+                readyQueue[0].bur=0
+                for u in range (len(cpyProcList)):
+                    if readyQueue[0].n == cpyProcList[u].n:
+                        cpyProcList[u].bur=readyQueue[0].bur
+                        
+                        
+                        
             for index in range (len(cpyProcList)):
-                if cpyProcList[index].arr<=t:
+                if cpyProcList[index].arr<=readyQueue[0].arr:
                     if cpyProcList[index].beenReady==0:
                         readyQueue.append(cpyProcList[index])
                         cpyProcList[index].beenReady=1
-            readyQueue.append(readyQueue[0])
-            readyQueue.remove(readyQueue[0])
+                        
+            if readyQueue[0].bur!=0:
+                for index in range (len(cpyProcList)):
+                    if cpyProcList[index].arr<=t:
+                        if cpyProcList[index].beenReady==0:
+                            readyQueue.append(cpyProcList[index])
+                            cpyProcList[index].beenReady=1
+                readyQueue.append(readyQueue[0])
+                readyQueue.remove(readyQueue[0])
+            else:
+                readyQueue.remove(readyQueue[0])
+                
         else:
-            readyQueue.remove(readyQueue[0])
-            
-            
-            
-        
-    else:
-        t+=1
-
-        
+            t+=1
     
-    for index in range (len(cpyProcList)):
-         if cpyProcList[index].bur==0:
-             flag+=1
-    if flag == len(cpyProcList):
-        break
-    else:
-        flag=0
-
-         
-            
+        for index in range (len(cpyProcList)):
+             if cpyProcList[index].bur==0:
+                 flag+=1
+        if flag == len(cpyProcList):
+            break
+        else:
+            flag=0
         
-
-
-
-
-#printing sequense
-for index in range (len(seq)):
-    print(seq[index])
-    
-for index in range (len(procEnds)):
-    procDiff.append(procEnds[index]-procStarts[index])
-    print(procIDs[index],procStarts[index],procEnds[index],procDiff[index])
-
-    
-
-print("/n")
-
-
-for index in range (len(procList)):
-    procList[index].tat=procList[index].finish-procList[index].arr
-    procList[index].wait=procList[index].tat-procList[index].bur
-    procList[index].weighted=float(procList[index].tat)/float(procList[index].bur)
-    print(procList[index].n)
-    print(procList[index].finish)
-
+    for index in range (len(procEnds)):
+        procDiff.append(procEnds[index]-procStarts[index])
+        
+    for index in range (len(procList)):
+        procList[index].tat=procList[index].finish-procList[index].arr
+        procList[index].wait=procList[index].tat-procList[index].bur
+        procList[index].weighted=float(procList[index].tat)/float(procList[index].bur)
+   
 #################################################################################
 '''
 
@@ -378,4 +333,3 @@ for i in range (len(servedProcList)):
     procDiff.append(procEnds[i]-procStarts[i])
     print( procIDs[i],procStarts[i], procEnds[i],procDiff[i])
 ###############################################################################
-'''
