@@ -217,11 +217,11 @@ def RR(file ,context ,quantum):
     procDiff=[]
     procIDs=[]
     flag=0
-    lastProcess=cpyProcList[0]
+
     while True:
         if len (readyQueue) !=0:
             if readyQueue[0].bur > float(quantum):
-                if lastProcess.n!=readyQueue[0].n:
+                if len(procIDs)!=0 and readyQueue[0].n!=procIDs[-1]:
                     t+=float(context)
                 procStarts.append(t)
                 t+= float(quantum)
@@ -234,7 +234,7 @@ def RR(file ,context ,quantum):
                 procIDs.append(readyQueue[0].n)
                 
             else:
-                if lastProcess.n!=readyQueue[0].n:
+                if len(procIDs)!=0 and readyQueue[0].n!=procIDs[-1]:
                     t+=float(context)
                 procStarts.append(t)
                 t+=readyQueue[0].bur
