@@ -67,11 +67,15 @@ o.close()
 
 #################FCFS##################################
 
-context =1
+context =1 
+procList = []
+procList.append(proc (1,2,5,1))   
+procList.append(proc (9,1,5,2)) 
+    
 arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
-
-
-for i in range(processes):
+    
+    
+for i in range(len(procList)):
     if i>0:
         if arrSorted[i].arr <= arrSorted[i-1].finish:
             arrSorted[i].start = arrSorted[i-1].finish+context
@@ -82,74 +86,95 @@ for i in range(processes):
     else:
         arrSorted[i].start =arrSorted[i].arr    
         arrSorted[i].finish =arrSorted[i].arr+arrSorted[i].bur
+    
+st =[]  
+n =[]      
+diff =[]
+for i in range(len(procList)):
+    st.append(procList[i].start)
+    n.append(procList[i].n)
+    diff.append(procList[i].finish - procList[i].arr )
+        
+print(st,n,diff)    
+plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
+    
 		
 ######################################################################
 ###########################SRTN#######################################
-seq=[]
-serve=[]
-
-context =1
-servedProc=-1    #no process
-timestep = 0.15
-arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
-time =arrSorted[0].arr 
-seq.append(time)
-serve.append(arrSorted[0].n)
-   #start of timeline
-arrReady=[]
-c=0
-while c < len(arrSorted):
-    if (arrSorted[c].arr<=time):
-        arrReady.append(arrSorted[c])  # get the ready ones out of the arrival into the queue
-        arrSorted.pop(c)
-        c=c-1
-    c = c+1
-
-
-while (len(arrSorted)>0 or len(arrReady)>0): #main loop
-   
-    arrReady.sort(key=lambda x: x.time, reverse=False)     # sort according to remaining time   
-            
-    if len(arrReady)>0:
-        if servedProc!=-1 and servedProc != arrReady[0].n:
-            time += context
-            seq.append(time)
-            serve.append(0)
-        servedProc = arrReady[0].n       #serving
-        arrReady[0].time -= timestep                    
-        time+= timestep
-        seq.append(time)
-        serve.append(arrReady[0].n)
-        size = len(arrReady)
-    else:   
-        time+= timestep
-        seq.append(time)
-        serve.append(0)
-        servedProc=-1                               #no serving  ->advance time
-    '''
-    new processes arriving
-    '''
+def SRTN(file,context):
+    
+    procList = []
+    procList.append(proc (1,2,5,1))   
+    procList.append(proc (9,1,5,2)) 
+    st=[]
+    fn=[]
+    n=[]
+    
+    
+    servedProc=-1    #no process
+    timestep = 0.3
+    arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
+    time =arrSorted[0].arr+float(context) 
+    st.append(time)
+    n.append(arrSorted[0].n)
+       #start of timeline
+    arrReady=[]
     c=0
     while c < len(arrSorted):
         if (arrSorted[c].arr<=time):
-            arrReady.append(arrSorted[c])        # check new arriving
+            arrReady.append(arrSorted[c])  # get the ready ones out of the arrival into the queue
             arrSorted.pop(c)
             c=c-1
-        c=c+1
+        c = c+1
+    
+    
+    while (len(arrSorted)>0 or len(arrReady)>0): #main loop
+       
+        arrReady.sort(key=lambda x: x.time, reverse=False)     # sort according to remaining time   
+                
+        if len(arrReady)>0:
+            if servedProc!=-1 and servedProc != arrReady[0].n:
+                fn.append(time)
+                time += float(context)
+                st.append(time)
+                n.append(arrSorted[0].n)
+            servedProc = arrReady[0].n       #serving
+            arrReady[0].time -= timestep                    
+            time+= timestep
+        else:   
+            time+= timestep
+            servedProc=-1                               #no serving  ->advance time
         
-    '''
-    finished proceses
-    '''
-    c=0
-    while c < len(arrReady):
-        if arrReady[c].time <=0:
-            for j in range(len(procList)):
-                if arrReady[c].n ==procList[j].n :      # remove finished proc from ready and set finish time in original list
-                    procList[j].finish= time+procList[j].time
-                    arrReady.pop(c)
-                    c=c-1
-                    break
-        c=c+1
+        #new processes arriving
+        
+        c=0
+        while c < len(arrSorted):
+            if (arrSorted[c].arr<=time):
+                arrReady.append(arrSorted[c])        # check new arriving
+                arrSorted.pop(c)
+                c=c-1
+            c=c+1
+            
+        
+        #finished proceses
+        
+        c=0
+        while c < len(arrReady):
+            if arrReady[c].time <=0:
+                for j in range(len(procList)):
+                    if arrReady[c].n ==procList[j].n :
+                        fn.append(time+procList[j].time)        # remove finished proc from ready and set finish time in original list
+                        procList[j].finish= time+procList[j].time
+                        arrReady.pop(c)
+                        c=c-1
+                        break
+            c=c+1
+            
+        
+            
+    print(st,n,diff)    
+    plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
+    plt.show()
 
 #######################################################
 ###############calc#################################	
@@ -170,12 +195,3 @@ weightedAvg = weightedAvg/processes
 gui -> get data from text boxes and connect the button and get data form combo box 
 code to read new input file 
 '''
-y_pos = np.arange(len(seq))
-performance = [10,8,6,4,2,1]
- 
-plt.bar(y_pos, serve, align='center', alpha=0.1)
-plt.xticks(y_pos, seq)
-plt.ylabel('process')
-plt.title('time')
- 
-plt.show()
