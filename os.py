@@ -108,7 +108,7 @@ plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
 
 #######################################################
 ###############calc#################################	
-'''
+
 avgTat =0
 weightedAvg =0
 		
@@ -120,11 +120,7 @@ for i in range(len(procList)):
         
 avgTat = avgTat/processes
 weightedAvg = weightedAvg/processes
-'''
-'''
-gui -> get data from text boxes and connect the button and get data form combo box 
-code to read new input file 
-'''
+
 #################################################################################### SALAMA ###########################################################################
 
 

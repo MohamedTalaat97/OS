@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter.ttk as ttk
 import numpy as np 
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 ######################################################
 class proc(object):
@@ -101,14 +103,43 @@ def FCFS(file , context ):
    st =[]  
    n =[]      
    diff =[]
-   for i in range(len(procList)):
-        st.append(procList[i].start)
-        n.append(procList[i].n)
-        diff.append(procList[i].finish - procList[i].start )
-            
-   print(st,n,diff)    
-   plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
-   plt.show()
+   for i in range(len(arrSorted)):
+        st.append(arrSorted[i].start)
+        n.append(arrSorted[i].n)
+        diff.append(arrSorted[i].finish -arrSorted[i].start )
+   
+   
+   fig = Figure (figsize = (5,4) , dpi = 100 ,edgecolor ='blue')
+   subplot = fig.add_subplot(111)
+   subplot.set_title('time sequence')
+   subplot.bar(st, n, width = diff ,align='edge', color = ('blue'))
+   r = Tk()
+   w=Window(root)
+
+   canvas = FigureCanvasTkAgg(fig,master = r)
+   canvas.show()
+   canvas.get_tk_widget().pack() 
+   #plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
+   avgTat =0
+   weightedAvg =0
+		
+   for i in range(len(arrSorted)):
+       arrSorted[i].tat = arrSorted[i].finish - arrSorted[i].arr
+       arrSorted[i].wait= arrSorted[i].tat - arrSorted[i].bur	 # calc finish
+       avgTat+=arrSorted[i].tat;
+       weightedAvg += arrSorted[i].tat/arrSorted[i].bur
+        
+   avgTat = avgTat/len(arrSorted)
+   weightedAvg = weightedAvg/len(arrSorted) 
+   
+   
+   o=open("Analysis.txt", "w")
+   for p in arrSorted:
+       o.write("Process "+ str(p.n) +" Waiting Time = " + ' ' + str(p.wait) + ' ' + "Turn Around Time = " +str(p.tat) + ' ' + "Weighted TAT = " + str(p.weighted) + '\n')
+   o.write("Average TAT = " + str(avgTat) +'\n'+ " Average WTAT = "+ str(weightedAvg) +'\n')
+   o.close()
+   r.mainloop()
+   
 
 ##############################################################################    
 def STRN(file,context):
@@ -186,9 +217,41 @@ def STRN(file,context):
     diff =[]      
     for i in range(len(st)):
         diff.append(fn[i]-st[i])               
-    print(st,n,fn)    
-    plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
-    plt.show()   
+    
+    
+    
+    fig = Figure (figsize = (5,4) , dpi = 100 ,edgecolor ='blue')
+    subplot = fig.add_subplot(111)
+    subplot.set_title('time sequence')
+    subplot.bar(st, n, width = diff ,align='edge', color = ('blue'))
+    r = Tk()
+    w=Window(root)
+
+    canvas = FigureCanvasTkAgg(fig,master = r)
+    canvas.show()
+    canvas.get_tk_widget().pack() 
+    #plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
+   
+    avgTat =0
+    weightedAvg =0
+		
+    for i in range(len(procList)):
+        procList[i].tat = procList[i].finish - procList[i].arr
+        procList[i].wait= procList[i].tat - procList[i].bur	 # calc finish
+        avgTat+=procList[i].tat;
+        weightedAvg += procList[i].tat/procList[i].bur
+        
+    avgTat = avgTat/len(procList)
+    weightedAvg = weightedAvg/len(procList)
+    
+
+    o=open("Analysis "+'STRN'+".txt", "w")
+    for p in procList:
+        o.write("Process "+ str(p.n) +" Waiting Time = " + ' ' + str(p.wait) + ' ' + "Turn Around Time = " +str(p.tat) + ' ' + "Weighted TAT = " + str(p.weighted) + '\n')
+    o.write("Average TAT = " + str(avgTat) +'\n'+ " Average WTAT = "+ str(weightedAvg) +'\n')
+    o.close()
+
+    r.mainloop()
 ###############################################################################
 def RR(file ,context ,quantum):
     
@@ -266,7 +329,7 @@ def RR(file ,context ,quantum):
             else:
                 readyQueue.remove(readyQueue[0])           
         else:
-            t+=1
+            t+=0.5
             for index in range (len(cpyProcList)):
                     if cpyProcList[index].arr<=t:
                         if cpyProcList[index].beenReady==0:
@@ -286,11 +349,31 @@ def RR(file ,context ,quantum):
         procList[index].tat=procList[index].finish-procList[index].arr
         procList[index].wait=procList[index].tat-procList[index].bur
         procList[index].weighted=float(procList[index].tat)/float(procList[index].bur)
-        
-    plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
-    print(len(procIDs))
-    plt.show()
-
+    
+    fig = Figure (figsize = (5,4) , dpi = 100 ,edgecolor ='blue')
+    subplot = fig.add_subplot(111)
+    subplot.set_title('time sequence')
+    subplot.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    r = Tk()
+    w=Window(root)
+    canvas = FigureCanvasTkAgg(fig,master = r)
+    canvas.show()
+    canvas.get_tk_widget().pack()     
+    #plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    tatSum=0
+    weightedTatSum=0
+    for p in procList:
+        tatSum+=p.tat
+        weightedTatSum+=p.weighted
+        AvgTat=float(tatSum)/len(procList)
+        AvgWeightedTat=float(weightedTatSum)/len(procList)
+    o=open("Analysis "+'rr'+".txt", "w")
+    for p in procList:
+        o.write("Process "+ str(p.n) +" Waiting Time = " + ' ' + str(p.wait) + ' ' + "Turn Around Time = " +str(p.tat) + ' ' + "Weighted TAT = " + str(p.weighted) + '\n')
+    o.write("Average TAT = " + str(AvgTat) +'\n'+ " Average WTAT = "+ str(AvgWeightedTat) +'\n')
+    o.close()
+    
+    r.mainloop()
 ###############################################################################
 def HPF(file,c):
     context = float(c)
@@ -382,8 +465,7 @@ def HPF(file,c):
         servedProcList[i].tat=servedProcList[i].finish-servedProcList[i].arr
         servedProcList[i].wait=servedProcList[i].tat-servedProcList[i].bur
         servedProcList[i].weighted=float(servedProcList[i].tat)/float(servedProcList[i].bur)
-        print(servedProcList[i].finish)
-        print(servedProcList[i].n)
+ 
     ################################ HPF Graph ####################################   
     procStarts=[]
     procEnds=[]
@@ -394,10 +476,35 @@ def HPF(file,c):
         procStarts.append(servedProcList[i].start)
         procEnds.append(servedProcList[i].finish)
         procDiff.append(procEnds[i]-procStarts[i])
-        print( procIDs[i],procStarts[i], procEnds[i],procDiff[i])
-        
-    plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
-    plt.show()        
+      
+    
+    fig = Figure (figsize = (5,4) , dpi = 100 ,edgecolor ='blue')
+    subplot = fig.add_subplot(111)
+    subplot.set_title('time sequence')
+    subplot.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
+    r = Tk()
+    w=Window(root)
+    canvas = FigureCanvasTkAgg(fig,master = r)
+    canvas.show()
+    canvas.get_tk_widget().pack()     
+    plt.figure()    
+    
+    
+    
+    tatSum=0
+    weightedTatSum=0
+    for p in servedProcList:
+        tatSum+=p.tat
+        weightedTatSum+=p.weighted
+        AvgTat=float(tatSum)/len(servedProcList)
+        AvgWeightedTat=float(weightedTatSum)/len(servedProcList)
+    o=open("Analysis.txt", "w")
+    for p in servedProcList:
+        o.write("Process "+ str(p.n) +" Waiting Time = " + ' ' + str(p.wait) + ' ' + "Turn Around Time = " +str(p.tat) + ' ' + "Weighted TAT = " + str(p.weighted) + '\n')
+        o.write("Average TAT = " + str(AvgTat) +'\n'+ " Average WTAT = "+ str(AvgWeightedTat) +'\n')
+    o.close()
+    
+   
 ###############################################################################
 root = Tk()
 w=Window(root)
