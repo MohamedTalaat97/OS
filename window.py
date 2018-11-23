@@ -71,8 +71,8 @@ class Window:
              elif self.combo.get() == 'HPF':
                 HPF(self.FileEntry.get(),self.ContextEntry.get())
 ########################################################
-def FCFS(file , context ):
-
+def FCFS(file , c ):
+   context = float(c)
    f=open(file,"r")
    lines=f.readlines()
    no = lines[0]
@@ -86,27 +86,53 @@ def FCFS(file , context ):
        procList.append(proc(float(lines[i].split(' ')[1]),float(lines[i].split(' ')[2]),int(priority),int(lines[i].split(' ')[0])))
    f.close() 
     
-   arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)   
-   for i in range(len(procList)):
-       if i>0:
-           if arrSorted[i].arr <= arrSorted[i-1].finish:
-               arrSorted[i].start = arrSorted[i-1].finish+float(context) 
-               arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
-           elif arrSorted[i].arr > arrSorted[i-1].finish:
-               arrSorted[i].start =arrSorted[i].arr+float(context) 
-               arrSorted[i].finish = arrSorted[i].bur+arrSorted[i].start
-       else:
-            print(arrSorted[i].arr)
-            arrSorted[i].start =arrSorted[i].arr+float(context)    
-            arrSorted[i].finish =arrSorted[i].start+arrSorted[i].bur
- 
-   st =[]  
-   n =[]      
-   diff =[]
-   for i in range(len(arrSorted)):
-        st.append(arrSorted[i].start)
-        n.append(arrSorted[i].n)
-        diff.append(arrSorted[i].finish -arrSorted[i].start )
+   arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False)
+   time =arrSorted[0].arr   
+   arrReady=[]
+   st=[]
+   fn=[]
+   n=[] 
+   timestep=1
+   c=0
+   while c < len(arrSorted):
+       if (arrSorted[c].arr<=time):
+           arrReady.append(arrSorted[c])  # get the ready ones out of the arrival into the queue
+           arrSorted.pop(c)
+           c=c-1
+       c = c+1
+       
+   while (len(arrSorted)>0 or len(arrReady)>0):
+       
+        #main loop       
+     arrReady.sort(key=lambda x: x.arr, reverse=False)  # sort according to arrival
+       
+     if len(arrReady)>0:
+            time+=context
+            st.append(time)
+            n.append(arrReady[0].n)         #serve 
+            time+=arrReady[0].bur
+            fn.append(time)
+            for j in range(len(procList)):
+                        if arrReady[0].n ==procList[j].n :
+                            procList[j].finish= time
+                            procList[j].start= time-procList[j].bur
+                            arrReady.pop(0)
+                            break
+            
+     else:
+            time+= timestep
+             
+     c=0
+     while c < len(arrSorted):
+            if (arrSorted[c].arr<=time):
+                arrReady.append(arrSorted[c])        # check new arriving
+                arrSorted.pop(c)
+                c=c-1
+            c=c+1
+    
+     diff =[]      
+     for i in range(len(st)):
+           diff.append(fn[i]-st[i])
    
    
    fig = Figure (figsize = (5,4) , dpi = 100 ,edgecolor ='blue')
@@ -159,6 +185,7 @@ def STRN(file,context):
     st=[]
     fn=[]
     n=[] 
+    
     servedProc=-1    #no process
     timestep = 0.1
     arrSorted = sorted(procList, key=lambda x: x.arr, reverse=False) #sort according to arrival
