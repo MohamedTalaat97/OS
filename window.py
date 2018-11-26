@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 import numpy as np 
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 ######################################################
@@ -71,7 +71,7 @@ class Window:
              elif self.combo.get() == 'HPF':
                 HPF(self.FileEntry.get(),self.ContextEntry.get())
 ########################################################
-def FCFS(file , c ):
+def FCFS(file , c  ):
    context = float(c)
    f=open(file,"r")
    lines=f.readlines()
@@ -143,24 +143,24 @@ def FCFS(file , c ):
    w=Window(root)
 
    canvas = FigureCanvasTkAgg(fig,master = r)
-   canvas.show()
+   canvas.draw()
    canvas.get_tk_widget().pack() 
    #plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
    avgTat =0
    weightedAvg =0
 		
-   for i in range(len(arrSorted)):
-       arrSorted[i].tat = arrSorted[i].finish - arrSorted[i].arr
-       arrSorted[i].wait= arrSorted[i].tat - arrSorted[i].bur	 # calc finish
-       avgTat+=arrSorted[i].tat;
-       weightedAvg += arrSorted[i].tat/arrSorted[i].bur
+   for i in range(len(procList)):
+       procList[i].tat = procList[i].finish - procList[i].arr
+       procList[i].wait= procList[i].tat - procList[i].bur	 # calc finish
+       avgTat+=procList[i].tat;
+       weightedAvg += procList[i].tat/procList[i].bur
         
-   avgTat = avgTat/len(arrSorted)
-   weightedAvg = weightedAvg/len(arrSorted) 
+   avgTat = avgTat/len(procList)
+   weightedAvg = weightedAvg/len(procList) 
    
    
-   o=open("Analysis.txt", "w")
-   for p in arrSorted:
+   o=open("Analysis fcfs.txt", "w")
+   for p in procList:
        o.write("Process "+ str(p.n) +" Waiting Time = " + ' ' + str(p.wait) + ' ' + "Turn Around Time = " +str(p.tat) + ' ' + "Weighted TAT = " + str(p.weighted) + '\n')
    o.write("Average TAT = " + str(avgTat) +'\n'+ " Average WTAT = "+ str(weightedAvg) +'\n')
    o.close()
@@ -255,7 +255,7 @@ def STRN(file,context):
     w=Window(root)
 
     canvas = FigureCanvasTkAgg(fig,master = r)
-    canvas.show()
+    canvas.draw()
     canvas.get_tk_widget().pack() 
     #plt.bar(st, n, width = diff ,align='edge', color = ('blue'))
    
@@ -384,7 +384,7 @@ def RR(file ,context ,quantum):
     r = Tk()
     w=Window(root)
     canvas = FigureCanvasTkAgg(fig,master = r)
-    canvas.show()
+    canvas.draw()
     canvas.get_tk_widget().pack()     
     #plt.bar(procStarts, procIDs, width = procDiff ,align='edge', color = ('blue'))
     tatSum=0
@@ -512,7 +512,7 @@ def HPF(file,c):
     r = Tk()
     w=Window(root)
     canvas = FigureCanvasTkAgg(fig,master = r)
-    canvas.show()
+    canvas.draw()
     canvas.get_tk_widget().pack()     
     plt.figure()    
     

@@ -1,0 +1,6 @@
+Process 1 Waiting Time =  1.0 Turn Around Time = 6.0 Weighted TAT = 0
+Process 2 Waiting Time =  6.0 Turn Around Time = 9.0 Weighted TAT = 0
+Process 3 Waiting Time =  16.0 Turn Around Time = 24.0 Weighted TAT = 0
+Process 3 Waiting Time =  -9.0 Turn Around Time = -3.0 Weighted TAT = 0
+Average TAT = 9.0
+ Average WTAT = 1.675

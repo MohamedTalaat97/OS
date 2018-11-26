@@ -1,15 +1,15 @@
-Process 4 Waiting Time =  0.0 Turn Around Time = 1.0 Weighted TAT = 1.0
-Average TAT = 10.8
- Average WTAT = 5.279999999999999
-Process 3 Waiting Time =  1.0 Turn Around Time = 3.0 Weighted TAT = 1.5
-Average TAT = 10.8
- Average WTAT = 5.279999999999999
-Process 1 Waiting Time =  3.0 Turn Around Time = 13.0 Weighted TAT = 1.3
-Average TAT = 10.8
- Average WTAT = 5.279999999999999
-Process 5 Waiting Time =  13.0 Turn Around Time = 18.0 Weighted TAT = 3.6
-Average TAT = 10.8
- Average WTAT = 5.279999999999999
-Process 2 Waiting Time =  18.0 Turn Around Time = 19.0 Weighted TAT = 19.0
-Average TAT = 10.8
- Average WTAT = 5.279999999999999
+Process 1 Waiting Time =  0.0 Turn Around Time = 9.0 Weighted TAT = 1.0
+Average TAT = 15.6
+ Average WTAT = 3.094761904761905
+Process 5 Waiting Time =  5.0 Turn Around Time = 8.0 Weighted TAT = 2.6666666666666665
+Average TAT = 15.6
+ Average WTAT = 3.094761904761905
+Process 2 Waiting Time =  11.0 Turn Around Time = 15.0 Weighted TAT = 3.75
+Average TAT = 15.6
+ Average WTAT = 3.094761904761905
+Process 4 Waiting Time =  13.0 Turn Around Time = 20.0 Weighted TAT = 2.857142857142857
+Average TAT = 15.6
+ Average WTAT = 3.094761904761905
+Process 3 Waiting Time =  21.0 Turn Around Time = 26.0 Weighted TAT = 5.2
+Average TAT = 15.6
+ Average WTAT = 3.094761904761905
